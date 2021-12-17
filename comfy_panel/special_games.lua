@@ -1,6 +1,7 @@
 local Event = require 'utils.event'
 local Color = require 'utils.color_presets'
 local Public = {}
+local deadPlayers = {}
 global.active_special_games = {}
 global.special_games_variables = {}
 local valid_special_games = {
@@ -51,8 +52,14 @@ local valid_special_games = {
 			[11] = {name = "eq7", type = "choose-elem-button", elem_type = "item"}
 		},
 		button = {name = "infinity_chest_apply", type = "button", caption = "Apply"}
+	},
+		
+	one_life = {
+		name = {type = "label", caption = "One game 1 life", tooltip = "Every player has 1 life"},
+		config = {
+		},
+		button = {name = "one_life_apply", type = "button", caption = "Apply"}
 	}
-
 }
 
 function Public.reset_active_special_games() for _, i in ipairs(global.active_special_games) do i = false end end
@@ -221,7 +228,10 @@ local function on_gui_click(event)
 		}
 
 		generate_infinity_chest(separate_chests, operable, gap, eq)
-
+	elseif element.name == "one_life_confirm" then
+		global.active_special_games["one_life"] = true
+		deadPlayers = {}
+		game.print('Special event one life event enabled ! When you die, it s over, you can not play anymore until the next game!',{r = 0, g = 1, b = 1})
 	end
 	if string.find(element.name, "_confirm") or element.name == "cancel" then
 		element.parent.parent.children[3].visible = true -- shows back Apply button
@@ -230,6 +240,30 @@ local function on_gui_click(event)
 end
 comfy_panel_tabs['Special games'] = {gui = create_special_games_panel, admin = true}
 
+local function on_player_died(event)
+	if global.active_special_games["one_life"] then
+		local p = game.players[event.player_index]
+		p.print('You died and lost your only one life, wait for end of current game to be able to play again..')
+		deadPlayers[p.name] = true
+		spectate(p, true)
+	end
+end
+
+local function on_player_changed_force(event)
+	if global.active_special_games["one_life"] then
+		local p = game.players[event.player_index]
+		if p.force.name ~= game.forces.spectator and deadPlayers[p.name] then
+			p.print('You can not join anymore, you died ! Watch and wait for the end of the current game to be able to play again',{r = 1, g = 0, b = 0})
+			spectate(p, true)
+		end
+		if p.force.name == "north" or p.force.name == "south" then
+			p.print('Beware, one life event is running ! Event enabled only for this game, do NOT die or you wont be able to play anymore until next game, value your life and team lives!',{r = 0, g = 1, b = 1})
+		end
+	end
+end
+
 Event.add(defines.events.on_gui_click, on_gui_click)
+Event.add(defines.events.on_player_died, on_player_died)
+Event.add(defines.events.on_player_changed_force, on_player_changed_force)
 return Public
 
