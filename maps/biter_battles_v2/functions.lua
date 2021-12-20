@@ -1,6 +1,8 @@
 local Server = require 'utils.server'
 local Muted = require 'utils.muted'
 local Tables = require "maps.biter_battles_v2.tables"
+local event = require 'utils.event'
+local Tabs = require 'comfy_panel.main'
 local string_sub = string.sub
 local math_random = math.random
 local math_round = math.round
@@ -398,13 +400,33 @@ function Public.create_map_intro_button(player)
 end
 
 function Public.show_intro(player)
+    local actions_width = 240
 	if player.gui.center["map_intro_frame"] then player.gui.center["map_intro_frame"].destroy() end
 	local frame = player.gui.center.add {type = "frame", name = "map_intro_frame", direction = "vertical"}
-	local frame = frame.add {type = "frame"}
-	local l = frame.add {type = "label", caption = {"biter_battles.map_info"}, name = "biter_battles_map_intro"}
+	local intro_scrollpanel = frame.add { type = "scroll-pane", name = "scroll_pane", direction = "vertical", horizontal_scroll_policy = "never", vertical_scroll_policy = "auto"}
+	intro_scrollpanel.style.maximal_height = 900
+	local l = intro_scrollpanel.add {type = "label", caption = {"biter_battles.map_info"}, name = "biter_battles_map_intro_scrollpane"}
 	l.style.single_line = false
 	l.style.font = "heading-2"
 	l.style.font_color = {r=0.7, g=0.6, b=0.99}
+	
+	local l = intro_scrollpanel.add {type = "label", caption = "Join us on discord !", name = "biter_battles_join_discord"}
+	local discord_link_flow = intro_scrollpanel.add {type = 'flow'}
+	local discord_link_flow_style = discord_link_flow.style
+	discord_link_flow_style.horizontal_align = 'center'
+	discord_link_flow_style.horizontally_stretchable = true
+	discord_link_flow_style.minimal_width = actions_width
+	discord_link_flow_style.maximal_width = actions_width
+	--discord_link_flow.add({type = 'label', caption = 'Discord link: '}).style.font = 'default-bold'
+	local discord_link_txt = discord_link_flow.add {type = 'text-box', text = 'https://discord.com/invite/hAYW3K7J2A'}
+	discord_link_txt.read_only = true
+	discord_link_txt.style.width = 270
+	discord_link_txt.style.height = 30
+	local b = intro_scrollpanel.add({type = 'button', caption = 'Next(how to play)', name = "biter_battles_intro_howtoplay"})
+	b.style.font = 'default-bold'
+	b.style.minimal_width = actions_width
+	b.style.maximal_width = actions_width
+	b.style.horizontal_align = 'left'	
 end
 
 function Public.map_intro_click(player, element)
@@ -444,4 +466,25 @@ function get_upgrade_modifier(ammo_category)
     return result
 end
 
+
+local function on_gui_click(event)
+    if not event then
+        return
+    end
+    if not event.element then
+        return
+    end
+    if not event.element.valid then
+        return
+    end
+
+    local player = game.players[event.element.player_index]
+    local name = event.element.name
+    local frame = Tabs.comfy_panel_get_active_frame(player)
+	
+	if name == "biter_battles_intro_howtoplay" then
+		frame.clear() -- bugged, need to find a way to change content of it..? 
+	end
+end
+event.add(defines.events.on_gui_click, on_gui_click)
 return Public
