@@ -58,7 +58,7 @@ end
 function Public.createDefense(forceName,revertPos)
 	global.difficulty_votes_timeout = 0
 	local bbSurface = game.surfaces[global.bb_surface_name]
-	local cleanedEntities = {"rock-huge", "rock-big", "rock-big", "rock-big", "sand-rock-big","gun-turret","wooden-chest","stone-wall"}
+	local cleanedEntities = {"rock-huge", "rock-big", "rock-big", "rock-big", "sand-rock-big","gun-turret","wooden-chest","stone-wall","iron-ore","copper-ore","stone","coal"}
 	for i,v in ipairs(cleanedEntities) do
 		
 		if forceName == 'north' then
@@ -93,8 +93,10 @@ function Public.createDefense(forceName,revertPos)
 	end
 	
 	if forceName == 'north' then 
-		local bp_string = Blueprint.get_blueprint("defenseBP")
+		--local bp_string = Blueprint.get_blueprint("defenseBP")
+		local bp_string = Blueprint.get_blueprint("defTest2")
 		local offset = global.rocket_silo[forceName].position
+		offset.y = offset.y - 30
 		local bp_entity = bbSurface.create_entity{name = 'item-on-ground', position= {0, 0}, stack = 'blueprint'}
 		bp_entity.stack.import_stack(bp_string)
 		local bp_entities = bp_entity.stack.get_blueprint_entities()
@@ -267,6 +269,7 @@ function Public.tables()
 	global.wave2 = {}
 	global.wave3 = {}
 	global.wave4 = {}
+	global.wave5 = {}
 	global.biter_spawn_unseen = {
 		["north"] = {
 			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
