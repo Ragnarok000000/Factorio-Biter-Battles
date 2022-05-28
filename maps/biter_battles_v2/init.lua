@@ -94,7 +94,7 @@ function Public.createDefense(forceName,revertPos)
 	
 	if forceName == 'north' then 
 		--local bp_string = Blueprint.get_blueprint("defenseBP")
-		local bp_string = Blueprint.get_blueprint("defTest2")
+		local bp_string = Blueprint.get_blueprint("defTest")
 		local offset = global.rocket_silo[forceName].position
 		offset.y = offset.y - 30
 		local bp_entity = bbSurface.create_entity{name = 'item-on-ground', position= {0, 0}, stack = 'blueprint'}
