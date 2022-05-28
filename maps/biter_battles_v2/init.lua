@@ -39,7 +39,73 @@ local function createTrollSong()
 		v.operable = false
 	end
 end
+local function get_replacement_tile(surface, position)
+	for i = 1, 128, 1 do
+		local vectors = {{0, i}, {0, i * -1}, {i, 0}, {i * -1, 0}}
+		table.shuffle_table(vectors)
+		for _, v in pairs(vectors) do
+			local tile = surface.get_tile(position.x + v[1], position.y + v[2])
+			if not tile.collides_with("resource-layer") then
+				if tile.name ~= "stone-path" then
+					return tile.name
+				end
+			end
+		end
+	end
+	return "grass-1"
+end
 
+function Public.createDefense(forceName,revertPos)
+	global.difficulty_votes_timeout = 0
+	local bbSurface = game.surfaces[global.bb_surface_name]
+	local cleanedEntities = {"rock-huge", "rock-big", "rock-big", "rock-big", "sand-rock-big","gun-turret","wooden-chest","stone-wall"}
+	for i,v in ipairs(cleanedEntities) do
+		
+		if forceName == 'north' then
+			local p = bbSurface.find_entities_filtered{area = {{-300, -300}, {300, 300}},name = v}
+			for i,entityFound in ipairs(p) do
+				if entityFound.valid then
+					entityFound.destroy()
+				end
+			end
+		end
+	end
+	game.forces[forceName].technologies['laser-shooting-speed-4'].researched = true
+	game.forces[forceName].technologies['energy-weapons-damage-4'].researched = true
+	game.forces[forceName].technologies['refined-flammables-4'].researched = true
+	game.forces[forceName].technologies['worker-robots-speed-5'].researched = true
+	game.forces[forceName].technologies['worker-robots-storage-3'].researched = true
+	game.forces[forceName].technologies['construction-robotics'].researched = true
+
+	local pos = global.rocket_silo[forceName].position
+	if forceName == 'north' then
+		game.print('ahah')
+		for _, t in pairs(bbSurface.find_tiles_filtered({area = {{pos.x - 300, pos.y - 200},{pos.x + 300, pos.y + 60}}, name = {"water", "deepwater"}})) do
+			bbSurface.set_tiles({{name = get_replacement_tile(bbSurface, t.position), position = t.position}})
+		end
+	end
+	
+	
+	if forceName == 'south' then
+		for _, t in pairs(bbSurface.find_tiles_filtered({area = {{pos.x - 300, pos.y - 60},{pos.x + 300, pos.y + 200}}, name = {"water", "deepwater"}})) do
+			bbSurface.set_tiles({{name = get_replacement_tile(bbSurface, t.position), position = t.position}})
+		end
+	end
+	
+	if forceName == 'north' then 
+		local bp_string = Blueprint.get_blueprint("defenseBP")
+		local offset = global.rocket_silo[forceName].position
+		local bp_entity = bbSurface.create_entity{name = 'item-on-ground', position= {0, 0}, stack = 'blueprint'}
+		bp_entity.stack.import_stack(bp_string)
+		local bp_entities = bp_entity.stack.get_blueprint_entities()
+		local bpInfo = {surface = bbSurface, force = forceName, position = offset, force_build = 'true'}
+		local bpResult = bp_entity.stack.build_blueprint(bpInfo)
+		bp_entity.destroy()
+		for k, v in pairs(bpResult) do
+			v.revive()
+		end
+	end
+end
 function Public.initial_setup()
 	game.map_settings.enemy_evolution.time_factor = 0
 	game.map_settings.enemy_evolution.destroy_factor = 0

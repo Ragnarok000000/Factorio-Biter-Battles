@@ -176,6 +176,12 @@ local function on_tick()
 		global.bb_threat["south_biters"] = global.bb_threat["south_biters"] + global.bb_threat_income["south_biters"]
 	end
 
+	if tick == 600 then
+		Init.createDefense("north",0)
+		Init.createDefense("south",0)
+		local posSpawn= {x = 0 , y=-170}
+		--spawn_wave(game.surfaces[global.bb_surface_name],1,0,2,posSpawn) was to test threat drop
+	end
 if tick % 60 == 0 then 
 		local posSpawn= {x = 0 , y=-200}
 		if global.wave2 == true then
