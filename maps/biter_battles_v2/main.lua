@@ -243,7 +243,7 @@ if tick % 60 == 0 then
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			posSpawn.x = posSpawn.x + 200 + 140 - 30
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
-			posSpawn.x = posSpawn.x + 80
+			posSpawn.x = posSpawn.x + 120
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			--posSpawn.x = posSpawn.x + 520
 			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,100,posSpawn)
