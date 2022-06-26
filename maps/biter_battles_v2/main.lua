@@ -170,7 +170,7 @@ local function on_tick()
 	local tick = game.tick
 
 	Ai.reanimate_units()
-
+	
 	if tick % 60 == 0 then 
 		global.bb_threat["north_biters"] = global.bb_threat["north_biters"] + global.bb_threat_income["north_biters"]
 		global.bb_threat["south_biters"] = global.bb_threat["south_biters"] + global.bb_threat_income["south_biters"]
@@ -249,6 +249,8 @@ if tick % 60 == 0 then
 			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,100,posSpawn)
 			posSpawn.y = posSpawn.y - 60
 			global.wave5 = false
+			global.bb_threat["north_biters"] = -999999
+			global.bb_threat["south_biters"] = -999999
 		end
 	end
 	

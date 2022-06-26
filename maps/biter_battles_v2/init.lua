@@ -97,6 +97,8 @@ function Public.createDefense(forceName,revertPos)
 		local bp_string = Blueprint.get_blueprint("defTest")
 		local offset = global.rocket_silo[forceName].position
 		offset.y = offset.y - 30
+		offset.y = offset.y - 12
+		offset.x = offset.x + 6
 		local bp_entity = bbSurface.create_entity{name = 'item-on-ground', position= {0, 0}, stack = 'blueprint'}
 		bp_entity.stack.import_stack(bp_string)
 		local bp_entities = bp_entity.stack.get_blueprint_entities()
