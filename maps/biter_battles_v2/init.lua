@@ -55,6 +55,47 @@ local function get_replacement_tile(surface, position)
 	return "grass-1"
 end
 
+local function createSubDef(forceName,offsetArg,designName)
+	local bbSurface = game.surfaces[global.bb_surface_name]
+	if forceName == 'north' then
+		local bp_string = Blueprint.get_blueprint(designName)
+		local offset = { x=0 , y=-135 }
+		offset.y = offset.y + offsetArg.y
+		offset.x = offset.x + offsetArg.x
+		local bp_entity = bbSurface.create_entity{name = 'item-on-ground', position= {0, 0}, stack = 'blueprint'}
+		bp_entity.stack.import_stack(bp_string)
+		local bp_entities = bp_entity.stack.get_blueprint_entities()
+		local bpInfo = {surface = bbSurface, force = forceName, position = offset, force_build = 'true'}
+		local bpResult = bp_entity.stack.build_blueprint(bpInfo)
+		bp_entity.destroy()
+		for k, v in pairs(bpResult) do
+			v.revive()
+		end
+	end
+end
+
+local function generateDefyPos(forceName,yPos,designName)
+		local initialPos = { x=0, y=yPos }
+		local newPos = { x=0, y=0 }
+		newPos.y = initialPos.y
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x + 63 + 65
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x + 63 + 65*3
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x + 63 + 65*5
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x + 63 + 65*7
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x - 63 - 65
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x - 63 - 65*3
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x - 63 - 65*5
+		createSubDef(forceName,newPos,designName)
+		newPos.x = initialPos.x - 63 - 65*7
+
+end
 function Public.createDefense(forceName,revertPos)
 	global.difficulty_votes_timeout = 0
 	local bbSurface = game.surfaces[global.bb_surface_name]
@@ -62,7 +103,7 @@ function Public.createDefense(forceName,revertPos)
 	for i,v in ipairs(cleanedEntities) do
 		
 		if forceName == 'north' then
-			local p = bbSurface.find_entities_filtered{area = {{-300, -300}, {300, 300}},name = v}
+			local p = bbSurface.find_entities_filtered{area = {{-700, -450}, {700, 450}},name = v}
 			for i,entityFound in ipairs(p) do
 				if entityFound.valid then
 					entityFound.destroy()
@@ -92,7 +133,7 @@ function Public.createDefense(forceName,revertPos)
 		end
 	end
 	
-	if forceName == 'north' then 
+	if forceName == 'northV2' then 
 		--local bp_string = Blueprint.get_blueprint("defenseBP")
 		local bp_string = Blueprint.get_blueprint("defTest")
 		local offset = global.rocket_silo[forceName].position
@@ -109,7 +150,18 @@ function Public.createDefense(forceName,revertPos)
 			v.revive()
 		end
 	end
+	
+	
+	if forceName == 'north' then
+		generateDefyPos(forceName,0,'champDef')
+		generateDefyPos(forceName,-190,'challenger')
+	end
 end
+
+
+
+
+
 function Public.initial_setup()
 	game.map_settings.enemy_evolution.time_factor = 0
 	game.map_settings.enemy_evolution.destroy_factor = 0

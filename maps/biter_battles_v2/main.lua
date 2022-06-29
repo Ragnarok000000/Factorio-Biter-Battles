@@ -148,10 +148,13 @@ local function spawn_wave(surface,amountBossMelee,amountBossSpit,amountNormalBit
 
 				local unit_group = surface.create_unit_group({position = positionSpawn, force = biter_force_name})
 				unit_group.add_member(biter)
+				local posTarget = pos
+				posTarget.y = posTarget.y + 100
 				local commands = {}
 					commands[1] = {
-						type = defines.command.attack,
-						target = global.rocket_silo["north"],
+						type = defines.command.go_to_location,
+						destination = posTarget,
+						radius = 5,
 						distraction = defines.distraction.by_enemy
 					}
 
@@ -174,20 +177,29 @@ local function on_tick()
 	if tick % 60 == 0 then 
 		global.bb_threat["north_biters"] = global.bb_threat["north_biters"] + global.bb_threat_income["north_biters"]
 		global.bb_threat["south_biters"] = global.bb_threat["south_biters"] + global.bb_threat_income["south_biters"]
+		
 	end
 	if tick == 20 then
+		Game_over.reveal_map()
+		
+		for _, f in pairs({"north", "south", "player", "spectator"}) do
+			local r = 768
+			game.forces[f].chart(game.surfaces[global.bb_surface_name],{{r * -1, r * -1}, {r, r}})
+		end
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {-50,-50},force="north"})
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {50,-50},force="north"})
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {-100,-50},force="north"})
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {100,-50},force="north"})
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {-200,-50},force="north"})
 		game.surfaces[global.bb_surface_name].create_entity({name = "radar", position = {200,-50},force="north"})
+		game.speed = 20
 	end
 
-	if tick == 600 then
+	if tick == 1500 then --1500
 		Init.createDefense("north",0)
-		Init.createDefense("south",0)
+		--Init.createDefense("south",0)
 		local posSpawn= {x = 0 , y=-170}
+		game.speed = 1
 		--spawn_wave(game.surfaces[global.bb_surface_name],1,0,2,posSpawn) was to test threat drop
 	end
 if tick % 60 == 0 then 
@@ -227,6 +239,7 @@ if tick % 60 == 0 then
 			global.wave4 = false
 		end
 		if global.wave5 == true then
+			game.speed = 5
 			posSpawn.x = 0
 			posSpawn.y = posSpawn.y + 30
 			game.forces["north"].technologies['laser-shooting-speed-7'].researched = true
@@ -237,14 +250,44 @@ if tick % 60 == 0 then
 			global.bb_threat["north_biters"] = 0
 			set_evo_and_threat(1,"automation-science-pack","north_biters")
 			game.print("Wave 5 enabled :" .. game.forces["north_biters"].evolution_factor .. "," .. global.bb_evolution["north_biters"] .. "," .. global.bb_threat["north_biters"])
-			posSpawn.x = posSpawn.x - 60 
+			local initPos = posSpawn
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
-			posSpawn.x = posSpawn.x - 140
+			posSpawn.x = 0 + 63 * 2
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
-			posSpawn.x = posSpawn.x + 200 + 140 - 30
+			posSpawn.x = 0 + 63 * 4
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
-			posSpawn.x = posSpawn.x + 120
+			posSpawn.x = 0 + 63 * 6
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 + 63 * 8
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 2
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 4
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 6
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			
+			
+			
+			
+			posSpawn.x = 0
+			posSpawn.y = posSpawn.y - 190
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 + 63 * 2
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 + 63 * 4
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 + 63 * 6
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 + 63 * 8
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 2
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 4
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			posSpawn.x = 0 - 63 * 6
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			
 			--posSpawn.x = posSpawn.x + 520
 			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,100,posSpawn)
 			posSpawn.y = posSpawn.y - 60
