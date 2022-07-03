@@ -120,7 +120,6 @@ function Public.createDefense(forceName,revertPos)
 
 	local pos = global.rocket_silo[forceName].position
 	if forceName == 'north' then
-		game.print('ahah')
 		for _, t in pairs(bbSurface.find_tiles_filtered({area = {{pos.x - 300, pos.y - 200},{pos.x + 300, pos.y + 60}}, name = {"water", "deepwater"}})) do
 			bbSurface.set_tiles({{name = get_replacement_tile(bbSurface, t.position), position = t.position}})
 		end
@@ -153,8 +152,8 @@ function Public.createDefense(forceName,revertPos)
 	
 	
 	if forceName == 'north' then
-		generateDefyPos(forceName,0,'champDef')
-		generateDefyPos(forceName,-190,'challenger')
+		generateDefyPos(forceName,0,'champBarOf20')
+		generateDefyPos(forceName,-190,'challengerBarOf22')
 	end
 end
 
@@ -324,6 +323,7 @@ function Public.tables()
 	global.wave3 = {}
 	global.wave4 = {}
 	global.wave5 = {}
+	global.wave6 = {}
 	global.biter_spawn_unseen = {
 		["north"] = {
 			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
@@ -364,9 +364,9 @@ function Public.tables()
 	-- To reach 100% reanimation chance at 200% evolution, set it to 100.
 	-- To reach 100% reanimation chance at 350% evolution, set it to 250.
 	global.max_reanim_thresh = 250
+	-- is a range between [0, 100], accessed by key with force's index.
 
 	-- Container for storing chance of reanimation. The stored value
-	-- is a range between [0, 100], accessed by key with force's index.
 	global.reanim_chance = {}
 
 	fifo.init()

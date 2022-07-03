@@ -132,6 +132,10 @@ local function spawn_wave(surface,amountBossMelee,amountBossSpit,amountNormalBit
 		{name = 'behemoth-spitter', count = amountBossSpit},
 		{name = 'behemoth-biter', count = amountBossMelee}
 	}
+	--local biters_wave = {
+	--	{name = 'behemoth-spitter', count = amountNormalBiters},
+	--	{name = 'behemoth-biter', count = 0}
+	--}
 	local biters_wave = {
 		{name = 'behemoth-spitter', count = amountNormalBiters/2},
 		{name = 'behemoth-biter', count = amountNormalBiters/2}
@@ -242,9 +246,15 @@ if tick % 60 == 0 then
 			game.speed = 5
 			posSpawn.x = 0
 			posSpawn.y = posSpawn.y + 30
-			game.forces["north"].technologies['laser-shooting-speed-7'].researched = true
-			game.forces["north"].technologies['energy-weapons-damage-6'].researched = true
-			game.forces["north"].technologies['refined-flammables-6'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-1'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-2'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-3'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-4'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-1'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-2'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-3'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-4'].researched = true
+			game.forces["north"].technologies['refined-flammables-4'].researched = true
 			game.forces["north_biters"].evolution_factor = 2
 			global.bb_evolution["north_biters"] = 2
 			global.bb_threat["north_biters"] = 0
@@ -267,9 +277,6 @@ if tick % 60 == 0 then
 			posSpawn.x = 0 - 63 * 6
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			
-			
-			
-			
 			posSpawn.x = 0
 			posSpawn.y = posSpawn.y - 190
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
@@ -278,8 +285,8 @@ if tick % 60 == 0 then
 			posSpawn.x = 0 + 63 * 4
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			posSpawn.x = 0 + 63 * 6
-			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
-			posSpawn.x = 0 + 63 * 8
+		    spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+		    posSpawn.x = 0 + 63 * 8
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			posSpawn.x = 0 - 63 * 2
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
@@ -287,11 +294,78 @@ if tick % 60 == 0 then
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
 			posSpawn.x = 0 - 63 * 6
 			spawn_wave(game.surfaces[global.bb_surface_name],0,0,150,posSpawn)
+			global.wave5 = false
+			global.bb_threat["north_biters"] = -999999
+			global.bb_threat["south_biters"] = -999999
+		end
+		if global.wave6 == true then
+			game.speed = 5
+			posSpawn.x = 0
+			posSpawn.y = posSpawn.y + 30
+			game.forces["north"].technologies['laser-shooting-speed-1'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-2'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-3'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-4'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-5'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-6'].researched = true
+			game.forces["north"].technologies['laser-shooting-speed-7'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-1'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-2'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-3'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-4'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-5'].researched = true
+			game.forces["north"].technologies['energy-weapons-damage-6'].researched = true
+			--game.forces["north"].technologies['energy-weapons-damage-7'].researched = true -- 1k white science total
+			--game.forces["north"].technologies['energy-weapons-damage-7'].level = 9 -- 3k white science total
+		   -- game.forces["north"].technologies['energy-weapons-damage-7'].level = 8 -- 1k white science total
+			game.forces["north"].technologies['refined-flammables-6'].researched = true
+			game.forces["north_biters"].evolution_factor = 3.6
+			global.bb_evolution["north_biters"] = 3.6
+			global.bb_threat["north_biters"] = 0
+			set_evo_and_threat(1,"automation-science-pack","north_biters")
+			game.print("Wave 6 enabled :" .. game.forces["north_biters"].evolution_factor .. "," .. global.bb_evolution["north_biters"] .. "," .. global.bb_threat["north_biters"])
+			local initPos = posSpawn
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 2
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 4
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 6
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 + 63 * 8
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 2
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 4
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 6
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			
+			
+			
+			
+			posSpawn.x = 0
+			posSpawn.y = posSpawn.y - 190
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 2
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 4
+			spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			posSpawn.x = 0 + 63 * 6
+		    spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+		    posSpawn.x = 0 + 63 * 8
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 2
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 4
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
+			--posSpawn.x = 0 - 63 * 6
+			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,300,posSpawn)
 			
 			--posSpawn.x = posSpawn.x + 520
 			--spawn_wave(game.surfaces[global.bb_surface_name],0,0,100,posSpawn)
 			posSpawn.y = posSpawn.y - 60
-			global.wave5 = false
+			global.wave6 = false
 			global.bb_threat["north_biters"] = -999999
 			global.bb_threat["south_biters"] = -999999
 		end
