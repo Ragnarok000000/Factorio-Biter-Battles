@@ -153,7 +153,7 @@ function Public.createDefense(forceName,revertPos)
 	
 	if forceName == 'north' then
 		generateDefyPos(forceName,0,'champBarOf20')
-		generateDefyPos(forceName,-190,'challengerBarOf22')
+		generateDefyPos(forceName,-190,'challengerBar86Long')
 	end
 end
 
