@@ -1,0 +1,609 @@
+/sc
+local y = 0
+rendering.clear()
+
+
+
+local y = 0
+rendering.clear()
+
+rendering.draw_text{
+    text = "Special Captain's tournament mode enabled (Match n°5)",
+    surface = game.player.surface,
+    target = {0,-16},
+    color = {
+        r = 1,
+        g = 0,
+        b = 0,
+        a = 1
+    },
+    
+    scale = 5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+rendering.draw_text{
+    text = "team x vs team yy. Referees: Ragnarok77. Teams on VC",
+    surface = game.player.surface,
+    target = {0,10},
+    color = {
+        r = 0.87,
+        g = 0.13,
+        b = 0.5,
+        a = 1
+    },
+    
+    scale = 1.50,
+    font = "heading-1",
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+rendering.draw_text{
+    text = "",
+    surface = game.player.surface,
+    target = {0,10},
+    color = {
+        r = 0.87,
+        g = 0.13,
+        b = 0.5,
+        a = 1
+    },
+    
+    scale = 1.50,
+    font = "heading-1",
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+local y = -14
+rendering.draw_text{
+    text = "Special event rule only : ",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "Use of /nth /sth /north-chat /south-chat /s /shout by spectator can be punished (warn-tempban)",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 0.87,
+        g = 0.13,
+        b = 0.5,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+y = y + 2
+
+rendering.draw_text{
+    text = "Notes :  ",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Chat of spectator can only be seen by spectators for players",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-For admins, as spectator, use ping to talk only to spectators",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Joining team late : Team with lowest amount of players gets the new player that arrived",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 0.8,
+        g = 0.8,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Joining team late : A new player is allowed to join a random team even if teams have even amount of players",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 0.8,
+        g = 0.8,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Joining team late : Exception for players that could break balance : poll",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 0.8,
+        g = 0.8,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "Friends case : Make your own group for easier picking, the opposite captain will pick same amount of players to compensate",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 0.8,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "Friends case : Group can be prohibited if it could result in breaking balance",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 0.8,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Teams are locked, if you want to play, ask to be moved to a team",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-We are using discord bb for coms (not required), feel free to join to listen ,even if no mic",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-If you are not playing, you can listen to any team, but your mic must be off",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+rendering.draw_text{
+    text = "-No sign up required, anyone can play the event !",
+    surface = game.player.surface,
+    target = {-50,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 2.5,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "Organization of event :",
+    surface = game.player.surface,
+    target = {76,-8},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+y = -8
+rendering.draw_text{
+    text = "Organization of event :",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "- Players not playing must join the group 'NotPlaying'",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+
+
+rendering.draw_text{
+    text = "2 Team pickers/captains are chosen (one north, one south)",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+
+rendering.draw_text{
+    text = "-One captain picks first a player, then second captain picks 2 player. then 1 player picked at a time",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Teams can come to discord voice channel of bb to have easier communication (not required, can just listen too)",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Vote/poll for difficulty",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Strategy talk in each team for few minutes until both captains say team is ready",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+rendering.draw_text{
+    text = "-Game starts, GL HF",
+    surface = game.player.surface,
+    target = {76,y},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+y = y + 2
+
+
+rendering.draw_text{
+    text = "Captains (amount of games won)",
+    surface = game.player.surface,
+    target = {28,-13.5},
+    color = {
+        r = 0,
+        g = 1,
+        b = 0,
+        a = 1
+    },
+    
+    scale = 2,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+rendering.draw_text{
+    text = "Players (amount of games won)",
+    surface = game.player.surface,
+    target = {28,-5.5},
+    color = {
+        r = 0,
+        g = 1,
+        b = 0,
+        a = 1
+    },
+    
+    scale = 2,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+
+rendering.draw_text{
+    text = "Amount of captain games logged : 5",
+    surface = game.player.surface,
+    target = {28,10},
+    color = {
+        r = 0,
+        g = 1,
+        b = 0,
+        a = 1
+    },
+    
+    scale = 2,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+
+
+rendering.draw_text{
+    text = "Want to play ? Ask to join a team!",
+    surface =game.player.surface,
+    target = {0,-9},
+    color = {
+        r = 1,
+        g = 1,
+        b = 1,
+        a = 1
+    },
+    scale = 3,
+    alignment = "center",
+    scale_with_zoom = false
+}
+
+
+
+ function split(text, delim)
+    local result = {}
+    local magic = "().%+-*?[]^$"
+
+    if delim == nil then
+        delim = "%s"
+    elseif string.find(delim, magic, 1, true) then
+        delim = "%"..delim
+    end
+
+    local pattern = "[^"..delim.."]+"
+    for w in string.gmatch(text, pattern) do
+        table.insert(result, w)
+    end
+    return result
+end
+
+for i=9,60,1 do
+	for k=-17,17,1 do
+		game.player.surface.set_tiles({{name = "deepwater", position = {x=i,y=k}}}, true)
+	end
+end
+
+for i=16,40,1 do
+	for k=-4,6,1 do
+		game.player.surface.set_tiles({{name = "yellow-refined-concrete", position = {x=i,y=k}}}, true)
+	end
+end
+
+for i=16,40,1 do
+	for k=-12,-8,1 do
+		game.player.surface.set_tiles({{name = "green-refined-concrete", position = {x=i,y=k}}}, true)
+	end
+end 
+
+
+for _, e in pairs(game.player.surface.find_entities_filtered({force = "neutral",area = {{-16, -16}, {60, 10}},type="unit"})) do
+	e.destroy()
+end
+
+
+local function generateTeam(_team, _x, _y)
+	local tempOffSetX = 0
+	for i,v in ipairs(_team)
+	do
+		local biterNameChosen = "small-biter"
+		if split(split(v,"(")[2],")")[1] == "2" then
+			biterNameChosen = "medium-biter"
+		end
+		if split(split(v,"(")[2],")")[1] == "3" then
+			biterNameChosen = "big-biter"
+		end
+		if split(split(v,"(")[2],")")[1] == "4" then
+			biterNameChosen = "behemoth-biter"
+		end
+		local biterGenerated = game.player.surface.create_entity({name=biterNameChosen,position={_x+tempOffSetX,_y},force="neutral"})
+		biterGenerated.active = false
+		biterGenerated.destructible = false
+		local colorChosen = {r = 0.8, g = 0.8, b =1,a=1}
+		if _y == -10 then colorChosen = { r = 1 , g = 1 , b = 0 , a = 1} end
+		local targetOffset = { x=0, y = 0}
+		if (_x+tempOffSetX -1) % 4 == 0 then
+			targetOffset = {x=0,y=-1.3}
+		end
+		if tempOffSetX > 20 then
+			tempOffSetX = 0
+			_y = _y + 2
+		end
+			rendering.draw_text{
+				text = v,
+				surface = game.player.surface,
+				target = biterGenerated,
+				color = colorChosen,
+				target_offset = targetOffset,
+				scale = 1,
+				alignment = "center",
+				scale_with_zoom = false
+			}
+		tempOffSetX = tempOffSetX + 2
+	end
+end
+
+local team = {"Donkasha(1)","Dr_Claw(1)","wyspar(1)","thesoldier57(1)","z-em(1)"}
+generateTeam(team,17,-10)
+local team = {"matovidlo(4)","thesoldier57(3)","kohonen(3)","Fordeka(3)","Smilingnasa(3)","Megafrot(3)","amelek(2)","Walross123(2)","bhenoa(2)","z-em(2)","aiwhisper(2)","plutocraft93(1)","dog80(1)","xithebun(1)","rs2klee(1)","ruetama(1)","koendegruijter(1)","Wietlol(1)","TheBigZet(1)","ninetz(1)","justbob333(1)","TailsMK4(1)","LP07(1)","dhx1(1)","Hiero(1)","Bridge2050(1)","jacobusson(1)","ahksam(1)","MartinMaxKing(1)","Dreadfush(1)","jasongros619(1)","PLUTOCRAT93(1)","ninetz(1)","tlmon(1)","AffeMitWaffe88(1)","Kryptonien(1)","_dj_ded_(1)"}
+generateTeam(team,17,-2)

@@ -1,0 +1,28 @@
+/sc
+game.write_file("captainTeam","")
+local finalString = 'local team = {'
+local i = 0
+
+for _, a in pairs(game.forces["north"].connected_players) do
+	if i > 0 then
+		finalString = finalString .. "," 
+	end
+	finalString = finalString .. '"' .. a.name.. '"'
+	i = 1
+end
+finalString = finalString .. "}\n"
+game.write_file("captainTeam",finalString .. "\n",true)
+
+
+local finalString = 'local team = {'
+local i = 0
+
+for _, a in pairs(game.forces["south"].connected_players) do
+	if i > 0 then
+		finalString = finalString .. "," 
+	end
+	finalString = finalString .. '"' .. a.name.. '"'
+	i = 1
+end
+finalString = finalString .. "}"
+game.write_file("captainTeam",finalString,true)
