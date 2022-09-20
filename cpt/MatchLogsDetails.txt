@@ -1,0 +1,39 @@
+
+1ST CPT 
+VICTORY >>local team = {"Donkasha","thesoldier57","kohonen","matovidlo","amelek","plutocraft93","dog80","xithebun","rs2klee","ruetama","koendegruijter"}
+generateTeam(team,x,y)
+y = y + 2
+LOSER>>local team = {"Opendrain","Busdriver1","grandelich","IceGecko","outstanding","Walross123","FTNS","hydracronix","Dr_Claw"," dwightkung","ponysuperstar"}
+generateTeam(team,x,y)
+y = y + 2
+
+2DN CAPTAIN
+// victory withcaptain Dr_Claw
+local team = {"Fordeka","Amelek","Dr_Claw","matovidlo","Wietlol","bhenoa","TheBigZet","ninetz","z-em","Walross123","Megafrot","justbob333"}
+
+3ND CAPTAIN Clutch331 vs wysper cpts
+VICTORY >> local team = {"Walross123","Fordeka","TailsMK4","thesoldier57","LP07","Kohonen","matovidlo","Smilingnasa","wyspar"}
+local team = {"bulkathos80","Wietlol","outstanding","jacobusson","Seneka","Clutch331","tom_cologne","MartinMaxKing","neuro666"}
+
+4ND CAPTAIN (neuro666 and thesoldier57 cpt)
+local team = {"neuro666","Warmed","outstanding","LP07","Kungeal","FrisoK","IceGecko","Amelek","slizeofpizza","AntiElitz","IronFist95","developer","thulle","Poo76765","Sergey_Yakimenko","OnkelTom","DrBen"}
+victory >> local team = {"dhx1","Hiero","thesoldier57","Bridge2050","matovidlo","Smilingnasa","jacobusson","ahksam","Kohonen","MartinMaxKing","Fordeka","Dreadfush","Edyconex","bhenoa","jasongros619","Megafrot","aiwhisper"}
+
+Very short summary : normal game, south won, ~4h game, 2/3 rockets thrown. North unlocked silo first (not that much ahead though from it), south started mixed build earlier though (and more working faster), then south threw rockets earlier. Then north had weaker laser upgrades and threw later, and south had another layer too. Oh and no green spam early, big biter came very late, both team rushed rockets
+
+5ND CAPTAIN (zem and thesoldier57 captain)
+victory >> local team = {"Smilingnasa","PLUTOCRAT93","ninetz","z-em","Megafrot","aiwhisper","tlmon","AffeMitWaffe88","Kryptonien","_dj_ded_","Tracolix"}
+local team = {"thesoldier57","matovidlo","Kungeal","Fordeka","Dr_Claw","tom_cologne","DrButtons","vook2306"}
+won 4h with purple spam while south was rushing rocket (silo research almost done), but 6k purple kileld them with 130k threat and like 156evo
+
+-details 4 (just matchv:
+local team = {"Smilingnasa","PLUTOCRAT93","ninetz","z-em","Megafrot","aiwhisper","tlmon","AffeMitWaffe88","Kryptonien","_dj_ded_","DF10","Tracolix"}
+local team = {"thesoldier57","matovidlo","Kungeal","Fordeka","Walross123","Dr_Claw","happyboy123","tom_cologne","abs_her","dog80","DrButtons"}
+local team = {"Smilingnasa","PLUTOCRAT93","ninetz","z-em","Megafrot","aiwhisper","tlmon","AffeMitWaffe88","Kryptonien","_dj_ded_","Tracolix"}
+local team = {"thesoldier57","matovidlo","Kungeal","Fordeka","Dr_Claw","tom_cologne","DrButtons","vook2306"}
+then at end
+local team = {"Smilingnasa","PLUTOCRAT93","ninetz","z-em","OnkelTom","DrBen","aiwhisper","AffeMitWaffe88","_dj_ded_","Tracolix"}
+local team = {"thesoldier57","matovidlo","Kungeal","FrisoK","Fordeka","Edyconex","Dr_Claw","tom_cologne","DrButtons","TSP","IamEye"}
+--
+
+6ND CAPTAIN ( we'll see the result)
