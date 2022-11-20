@@ -7,7 +7,7 @@ local Muted = require 'utils.muted'
 
 local font_color = Color.warning
 local font = 'default-game'
-local format = string.format 
+local format = string.format
 
 local brain = {
     [1] = {'Our Discord server is at: https://discord.com/invite/hAYW3K7J2A'},
