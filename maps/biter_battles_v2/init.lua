@@ -315,6 +315,7 @@ function Public.forces()
 	f.set_friend("spectator", true)
 	f.set_friend("south_biters", true)
 	f.set_friend("south_biters_boss", true)
+	-- NOK FIXME NEED REDUCED SPEED NOT INCREASED f.set_gun_speed_modifier("laser",0.5)
 	f.share_chart = true
 
 	local f = game.forces["south"]
@@ -323,6 +324,7 @@ function Public.forces()
 	f.set_friend("spectator", true)
 	f.set_friend("north_biters", true)
 	f.set_friend("north_biters_boss", true)
+	-- NOK FIXME NEED REDUCED SPEED NOT INCREASED f.set_gun_speed_modifier("laser",0.5)
 	f.share_chart = true
 
 	local f = game.forces["north_biters"]
