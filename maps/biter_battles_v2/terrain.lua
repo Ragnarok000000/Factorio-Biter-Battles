@@ -3,6 +3,7 @@ local LootRaffle = require "functions.loot_raffle"
 local BiterRaffle = require "maps.biter_battles_v2.biter_raffle"
 local bb_config = require "maps.biter_battles_v2.config"
 local Functions = require "maps.biter_battles_v2.functions"
+local mixed_ore_map = require "maps.biter_battles_v2.mixed_ore_map"
 local AiTargets = require "maps.biter_battles_v2.ai_targets"
 local tables = require "maps.biter_battles_v2.tables"
 local session = require 'utils.datastore.session_data'
@@ -10,7 +11,7 @@ local session = require 'utils.datastore.session_data'
 local spawn_ore = tables.spawn_ore
 local table_insert = table.insert
 local math_floor = math.floor
-local math_random = math.random
+local math_random = math.random_seeded
 local math_abs = math.abs
 local math_sqrt = math.sqrt
 
@@ -213,7 +214,9 @@ local function generate_starting_area(pos, surface)
 		return
 	end
 
-	if surface.can_place_entity({name = "wooden-chest", position = pos}) and surface.can_place_entity({name = "coal", position = pos}) then
+	if surface.can_place_entity({name = "wooden-chest", position = pos}) 
+		and (surface.can_place_entity({name = "coal", position = pos}) or global.active_special_games['mixed_ore_map'])
+	then
 		local noise_2 = Functions.get_noise(3, pos)
 		if noise_2 < 0.40 then
 			if noise_2 > -0.40 then
@@ -375,7 +378,7 @@ local function mixed_ore(surface, left_top_x, left_top_y)
 		for y = 0, 31, 1 do
 			local pos = {x = left_top_x + x, y = left_top_y + y}
 			if surface.can_place_entity({name = "iron-ore", position = pos}) then
-				local noise = GetNoise("bb_ore", pos, seed)
+				noise = GetNoise("bb_ore", pos, seed)
 				if noise > 0.72 then
 					local i = math_floor(noise * 25 + math_abs(pos.x) * 0.05) % 4 + 1
 					local amount = (math_random(800, 1000) + math_sqrt(pos.x ^ 2 + pos.y ^ 2) * 3) * mixed_ore_multiplier[i]
@@ -396,7 +399,11 @@ function Public.generate(event)
 	local left_top_x = left_top.x
 	local left_top_y = left_top.y
 
-	mixed_ore(surface, left_top_x, left_top_y)
+	if global.active_special_games['mixed_ore_map'] then
+		mixed_ore_map(surface, left_top_x, left_top_y)
+	else
+		mixed_ore(surface, left_top_x, left_top_y)
+	end
 	generate_river(surface, left_top_x, left_top_y)
 	draw_biter_area(surface, left_top_x, left_top_y)		
 	generate_extra_worm_turrets(surface, left_top)
@@ -453,6 +460,16 @@ function Public.draw_spawn_area(surface)
 	surface.regenerate_decorative()
 end
 
+function Public.draw_mixed_ore_spawn_area(surface)
+	-- Redraw mixed ore map in spawn area because some tiles may change in Init.draw_structures()
+	local chunk_r = 4
+	for x = chunk_r * -1, chunk_r, 1 do
+		for y = chunk_r * -1, -1, 1 do
+			mixed_ore_map(surface, x * 32, y * 32)
+		end
+	end
+end
+
 function Public.draw_water_for_river_ends(surface, chunk_pos)
 	local left_top_x = chunk_pos.x * 32
 	for x = 0, 31, 1 do
@@ -467,7 +484,7 @@ local function draw_grid_ore_patch(count, grid, name, surface, size, density)
 	-- ore patch on top of it. Grid is held by reference, so this function
 	-- is reentrant.
 	for i = 1, count, 1 do
-		local idx = math.random(1, #grid)
+		local idx = math_random(1, #grid)
 		local pos = grid[idx]
 		table.remove(grid, idx)
 
@@ -536,8 +553,8 @@ function Public.generate_spawn_ore(surface)
 	-- Calculate left_top position of a chunk. It will be used as origin
 	-- for ore drawing. Reassigns new coordinates to the grid.
 	for i, _ in ipairs(grid) do
-		grid[i][1] = grid[i][1] * 32 + math.random(-12, 12)
-		grid[i][2] = grid[i][2] * 32 + math.random(-24, -1)
+		grid[i][1] = grid[i][1] * 32 + math_random(-12, 12)
+		grid[i][2] = grid[i][2] * 32 + math_random(-24, -1)
 	end
 
 	for name, props in pairs(spawn_ore) do
