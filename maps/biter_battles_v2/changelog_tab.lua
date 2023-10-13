@@ -6,6 +6,9 @@ local function add_changelog(player, element)
 	changelog_scrollpanel.style.maximal_height = 530
 	
 	local changelog_change = {}
+	table.insert(changelog_change,"2023-10-13")
+	table.insert(changelog_change,"Added difficulty and playtime log")
+	table.insert(changelog_change,"Ragnarok77")
 	table.insert(changelog_change,"2023-10-12")
 	table.insert(changelog_change,"Fix: NaN propagation in strike code")
 	table.insert(changelog_change,"amannm")
