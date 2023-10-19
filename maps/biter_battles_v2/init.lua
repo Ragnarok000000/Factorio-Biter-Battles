@@ -114,6 +114,7 @@ function Public.initial_setup()
 	}
 	for _, d in pairs(defs) do p.set_allows_action(d, true) end
 
+	global.suspend_time_limit = 3600
 	global.reroll_time_limit = 1800
 	global.gui_refresh_delay = 0
 	global.game_lobby_active = true
@@ -124,6 +125,7 @@ function Public.initial_setup()
 		["only_admins_vote"] = false,		--Are only admins able to vote on the global difficulty?
 		--MAP SETTINGS--
 		["new_year_island"] = false,
+		["bb_map_reveal_toggle"] = true,
 		["map_reroll_admin_disable"] = true,
 	}
 
@@ -146,11 +148,12 @@ end
 --Terrain Playground Surface
 function Public.playground_surface()
 	local map_gen_settings = {}
-	local int_max = 2 ^ 31
-	map_gen_settings.seed = math.random(1, int_max)
-	map_gen_settings.water = math.random(15, 65) * 0.01
+	map_gen_settings.seed = global.next_map_seed
+	-- reset next_map_seed for next round
+	global.next_map_seed = 1
+	map_gen_settings.water = global.random_generator(15, 65) * 0.01
 	map_gen_settings.starting_area = 2.5
-	map_gen_settings.terrain_segmentation = math.random(30, 40) * 0.1
+	map_gen_settings.terrain_segmentation = global.random_generator(30, 40) * 0.1
 	map_gen_settings.cliff_settings = {cliff_elevation_interval = 0, cliff_elevation_0 = 0}
 	map_gen_settings.autoplace_controls = {
 		["coal"] = {frequency = 6.5, size = 0.34, richness = 0.24},
@@ -159,7 +162,7 @@ function Public.playground_surface()
 		["iron-ore"] = {frequency = 8.5, size = 0.8, richness = 0.23},
 		["uranium-ore"] = {frequency = 2.2, size = 1, richness = 1},
 		["crude-oil"] = {frequency = 8, size = 1.4, richness = 0.45},
-		["trees"] = {frequency = math.random(8, 28) * 0.1, size = math.random(6, 14) * 0.1, richness = math.random(2, 4) * 0.1},
+		["trees"] = {frequency = global.random_generator(8, 28) * 0.1, size = global.random_generator(6, 14) * 0.1, richness = global.random_generator(2, 4) * 0.1},
 		["enemy-base"] = {frequency = 0, size = 0, richness = 0}
 	}
 	local surface = game.create_surface(global.bb_surface_name, map_gen_settings)
@@ -183,6 +186,22 @@ function Public.draw_structures()
 	--Terrain.generate_spawn_goodies(surface)
 end
 
+function Public.reveal_map()
+	if global.bb_settings["bb_map_reveal_toggle"] then
+		local surface = game.surfaces[global.bb_surface_name]
+		local width = 2000 -- for one side
+		local height = 500 -- for one side
+		for x = 16, width, 32 do
+			for y = 16, height, 32 do
+				game.forces["spectator"].chart(surface, {{-x, -y}, {-x, -y}})
+				game.forces["spectator"].chart(surface, {{x, -y}, {x, -y}})
+				game.forces["spectator"].chart(surface, {{-x, y}, {-x, y}})
+				game.forces["spectator"].chart(surface, {{x, y}, {x, y}})
+			end
+		end
+	end
+end
+
 function Public.tables()
 	local get_score = Score.get_table()
 	get_score.score_table = {}
@@ -197,6 +216,20 @@ function Public.tables()
 		global.bb_surface_name = "bb0"
 	end
 
+	global.suspended_time = 36000
+	global.suspend_target = nil
+	global.suspend_voting = {}
+	global.suspended_players = {}
+	if global.random_generator == nil then
+		global.random_generator = game.create_random_generator()
+	end
+	if global.next_map_seed == nil or global.next_map_seed < 341 then
+		-- Seeds 1-341 inclusive are the same
+		-- https://lua-api.factorio.com/latest/classes/LuaRandomGenerator.html#re_seed
+		global.next_map_seed = global.random_generator(341, 4294967294)
+	end
+	-- Our terrain gen seed IS the map seed
+	global.random_generator.re_seed(global.next_map_seed)
 	global.reroll_map_voting = {}
 	global.bb_evolution = {}
 	global.bb_game_won_by_team = nil
@@ -279,7 +312,7 @@ function Public.tables()
 	fifo.init()
 
 	global.next_attack = "north"
-	if math.random(1,2) == 1 then global.next_attack = "south" end
+	if global.random_generator(1,2) == 1 then global.next_attack = "south" end
 end
 
 function Public.load_spawn()
