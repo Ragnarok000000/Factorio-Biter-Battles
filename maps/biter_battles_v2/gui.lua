@@ -740,7 +740,7 @@ local function on_gui_click(event)
 	if name == "bb_players" then
 		global.bb_view_players[player.name] = not global.bb_view_players[player.name]
 		Public.update_main_gui(player)
-
+	end
 	if name == "reroll_yes" then 
 		if global.reroll_map_voting[player.name] ~= 1 then 
 			global.reroll_map_voting[player.name] = 1 
