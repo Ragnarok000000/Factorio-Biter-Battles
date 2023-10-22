@@ -1,6 +1,6 @@
 local Public = {}
 local Server = require 'utils.server'
-require 'utils.gui_styles'
+local gui_style = require 'utils.utils'.gui_style
 local forces = {
 	{name = "north", color = {r = 0, g = 0, b = 200}},
 	{name = "spectator", color = {r = 111, g = 111, b = 111}},
@@ -30,6 +30,7 @@ local function freeze_players()
 		defines.input_action.gui_text_changed,
 		defines.input_action.gui_value_changed,
 		defines.input_action.edit_permission_group,
+		defines.input_action.gui_selected_tab_changed
 	}	
 	for _, d in pairs(defs) do p.set_allows_action(d, true) end
 end
@@ -100,6 +101,7 @@ function Public.draw_top_toggle_button(player)
 		button.style.font = "heading-2"
 		button.style.font_color = {r = 0.88, g = 0.55, b = 0.11}
 		element_style({element = button, x = 114, y = 38, pad = -2})
+		gui_style(button, {width = 114, height = 38, padding = -2})
 	end
 end
 

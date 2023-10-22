@@ -6,7 +6,7 @@ local bb_config = require "maps.biter_battles_v2.config"
 local bb_diff = require "maps.biter_battles_v2.difficulty_vote"
 local event = require 'utils.event'
 local Functions = require "maps.biter_battles_v2.functions"
-local feed_the_biters = require "maps.biter_battles_v2.feeding"
+local Feeding = require "maps.biter_battles_v2.feeding"
 local Tables = require "maps.biter_battles_v2.tables"
 
 local wait_messages = Tables.wait_messages
@@ -15,7 +15,8 @@ local food_names = Tables.gui_foods
 local math_random = math.random
 local math_abs = math.abs
 require "maps.biter_battles_v2.spec_spy"
-require 'utils/gui_styles'
+local gui_style = require 'utils.utils'.gui_style
+local has_life = require 'comfy_panel.special_games'.has_life
 local gui_values = {
 		["north"] = {force = "north", biter_force = "north_biters", c1 = bb_config.north_side_team_name, c2 = "JOIN ", n1 = "join_north_button",
 		t1 = "Evolution of north side biters.",
@@ -42,32 +43,17 @@ function Public.reset_tables_gui()
 	global.player_data_afk = {}
 end
 
-local function show_pretty_threat(forceName)
-	local threat_value = math.floor(global.bb_threat[forceName])
-	if math_abs(threat_value) >= 1000000 then
-		threat_value = threat_value / 1000000
-		threat_value = tonumber(string.format("%.2f", threat_value))
-		threat_value = threat_value .. "M"
-	elseif math_abs(threat_value) >= 100000 then
-		threat_value = threat_value / 1000
-		threat_value = tonumber(string.format("%.0f", threat_value))
-		threat_value = threat_value .. "k"
-	end
-	return threat_value
-end
-
 local function create_sprite_button(player)
 	if player.gui.top.bb_toggle_button then return end
 	local button = player.gui.top.add({type = "sprite-button", name = "bb_toggle_button", sprite = "entity/big-biter"})
-	button.style.font = "default-bold"
-	element_style({element = button, x= 38, y = 38, pad = -2})
+	gui_style(button, {width = 38, height = 38, padding = -2, font = "default-bold"})
 end
 
 local function get_current_clock_time_string()
 	local total_minutes = math.floor(game.ticks_played / (60 * 60))
 	local total_hours = math.floor(total_minutes / 60)
 	local minutes = total_minutes - (total_hours * 60)
-	return string.format("Game time: %02d:%02d", total_hours, minutes)
+	return string.format("Game time: %02d:%02d   Speed: %.2f", total_hours, minutes, game.speed)
 end
 
 local function add_clock_element(frame)
@@ -279,6 +265,20 @@ local function add_prod_button(elem, gui_value)
 	prod_button.style.width = 25
 end
 
+local function show_pretty_threat(forceName)
+	local threat_value = math.floor(global.bb_threat[forceName])
+	if math_abs(threat_value) >= 1000000 then
+		threat_value = threat_value / 1000000
+		threat_value = tonumber(string.format("%.2f", threat_value))
+		threat_value = threat_value .. "M"
+	elseif math_abs(threat_value) >= 100000 then
+		threat_value = threat_value / 1000
+		threat_value = tonumber(string.format("%.0f", threat_value))
+		threat_value = threat_value .. "k"
+	end
+	return threat_value
+end
+
 function Public.update_or_create_main_gui(player)
 
 	if global.bb_game_won_by_team then return end
@@ -336,6 +336,29 @@ function Public.update_main_gui(player)
 		update_threat_text(stats_table, gui_value, biter_force)
 		bb_diff.update_difficulty_gui_for_player(player, math.floor(global.difficulty_vote_value*100))
 
+--how even do I solve this conflict FIXME	
+--	local frame = player.gui.left.add { type = "frame", name = "bb_main_gui", direction = "vertical" }
+
+--	clock(frame)
+	-- Science sending GUI
+--	if not is_spec then
+--		frame.add { type = "table", name = "biter_battle_table", column_count = 4 }
+--		local t = frame.biter_battle_table
+--		for food_name, tooltip in pairs(food_names) do
+--			local s = t.add { type = "sprite-button", name = food_name, sprite = "item/" .. food_name, tooltip = tooltip}
+--			gui_style(s, {minimal_height = 41, minimal_width = 41, padding = 0})
+--			if global.active_special_games["disable_sciences"] and global.special_games_variables.disabled_food[food_name] then
+--				s.enabled = false
+--				s.tooltip = "Disabled by special game"
+--			end
+--		end
+--		local s = t.add { type = "sprite-button", name = "send_all", caption = "All", tooltip = "LMB - low to high, RMB - high to low"}
+--		if global.active_special_games["disable_sciences"] then
+--			s.enabled = false
+--			s.tooltip = "Disabled by special game"
+--		end
+--		gui_style(s, {minimal_height = 41, minimal_width = 41, padding = 0, font_color = {r = 0.9, g = 0.9, b = 0.9}})
+--		frame.add{type="line"}
 	end
 end
 
@@ -384,11 +407,11 @@ function Public.create_main_gui(player)
 		local c = gui_value.c1
 		if global.tm_custom_name[gui_value.force] then c = global.tm_custom_name[gui_value.force] end
 		local l = t.add{ name="c1", type = "label", caption = c}
+		gui_style(l, {font = "default-bold", font_color = gui_value.color1, single_line = false, maximal_width = 102})
 		l.style.font = "default-bold"
 		l.style.font_color = gui_value.color1
 		l.style.single_line = false
 		l.style.maximal_width = 102
-
 		-- Number of players
 		local l = t.add{type = "label", caption = " - "}
 		local player_count_string = t.add{ name="player_count_string", type = "label", caption = ""}
@@ -470,6 +493,17 @@ local get_player_data = function(player, remove)
     return global.player_data_afk[player.name]
 end
 
+local get_player_data = function(player, remove)
+    if remove and global.player_data_afk[player.name] then
+        global.player_data_afk[player.name] = nil
+        return
+    end
+    if not global.player_data_afk[player.name] then
+        global.player_data_afk[player.name] = {}
+    end
+    return global.player_data_afk[player.name]
+end
+
 function join_team(player, force_name, forced_join, auto_join)
 	if not player.character then return end
 	if not forced_join then
@@ -493,6 +527,13 @@ function join_team(player, force_name, forced_join, auto_join)
 
 	if global.chosen_team[player.name] then
 		if not forced_join then
+			if global.active_special_games["limited_lives"] and not has_life(player.name) then
+				player.print(
+					"Special game in progress. You have no lives left until the end of the game.",
+					{r = 0.98, g = 0.66, b = 0.22}
+				)
+				return
+			end
 			if game.tick - global.spectator_rejoin_delay[player.name] < 3600 then
 				player.print(
 					"Not ready to return to your team yet. Please wait " .. 60-(math.floor((game.tick - global.spectator_rejoin_delay[player.name])/60)) .. " seconds.",
@@ -501,6 +542,14 @@ function join_team(player, force_name, forced_join, auto_join)
 				return
 			end
 		end	
+		local p = nil
+		local p_data = get_player_data(player)
+		if p_data and p_data.position then
+			p = surface.find_non_colliding_position("character", p_data.position,16, 0.5)
+			get_player_data(player, true)
+		else
+			p = surface.find_non_colliding_position("character", game.forces[force_name].get_spawn_position(surface), 16, 0.5)
+		end
 		local p = nil
 		local p_data = get_player_data(player)
 		if p_data and p_data.position then
@@ -670,7 +719,10 @@ local function on_gui_click(event)
 
 	if name == "raw-fish" then Functions.spy_fish(player, event) return end
 
-	if food_names[name] then feed_the_biters(player, name) return end
+	if food_names[name] then Feeding.feed_biters(player, name) return end
+
+	if name == "send_all" then Feeding.feed_biters_mixed(player, event.button) return end
+	if name == "bb_leave_spectate" then join_team(player, global.chosen_team[player.name])	end
 
 	if name == "bb_spectate" then
 		if player.spectator then
@@ -688,6 +740,18 @@ local function on_gui_click(event)
 	if name == "bb_players" then
 		global.bb_view_players[player.name] = not global.bb_view_players[player.name]
 		Public.update_main_gui(player)
+
+	if name == "reroll_yes" then 
+		if global.reroll_map_voting[player.name] ~= 1 then 
+			global.reroll_map_voting[player.name] = 1 
+			game.print(player.name .. " wants to reroll map ",{r = 0.1, g = 0.9, b = 0.0})
+		end
+	end
+	if name == "reroll_no" then 
+		if global.reroll_map_voting[player.name] ~= 0 then 
+			global.reroll_map_voting[player.name] = 0
+			game.print(player.name .. " wants to keep this map", {r = 0.9, g = 0.1, b = 0.1})
+		end
 	end
 end
 

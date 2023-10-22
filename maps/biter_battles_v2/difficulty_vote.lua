@@ -3,7 +3,7 @@ local ai = require "maps.biter_battles_v2.ai"
 local event = require 'utils.event'
 local Server = require 'utils.server'
 local Tables = require "maps.biter_battles_v2.tables"
-require 'utils/gui_styles'
+local gui_style = require 'utils.utils'.gui_style
 
 local difficulties = Tables.difficulties
 
@@ -54,9 +54,15 @@ local function poll_difficulty(player)
 	end
 	
 	local frame = player.gui.center.add { type = "frame", caption = "Vote global difficulty:", name = "difficulty_poll", direction = "vertical" }
-	for key, _ in pairs(difficulties) do
-		local b = frame.add({type = "button", name = tostring(key), caption = difficulties[key].name .. " (" .. difficulties[key].str .. ")"})
-		b.style.font_color = difficulties[key].color
+	local vote_amounts = {}
+	for k, v in pairs(global.difficulty_player_votes) do
+		vote_amounts[v] = (vote_amounts[v] or 0) + 1
+	end
+	
+	for key, difficulty in pairs(difficulties) do
+		local caption = table.concat({difficulty.name, " (", difficulty.str, ")", " : ", (vote_amounts[key] or 0)})
+		local b = frame.add{type = "button", name = tostring(key), caption = caption}
+		b.style.font_color = difficulty.color
 		b.style.font = "heading-2"
 		b.style.minimal_width = 180
 	end
@@ -122,7 +128,9 @@ local function on_gui_click(event)
 	if not event then return end
 	if not event.element then return end
 	if not event.element.valid then return end
+
 	local player = game.players[event.element.player_index]
+
 	if event.element.name == "difficulty_gui" then
 		poll_difficulty(player)
 		return
@@ -159,10 +167,14 @@ local function on_gui_click(event)
         return
     end
 	
-	game.print(player.name .. " has voted for " .. difficulties[i].name .. " difficulty!", difficulties[i].print_color)
-	global.difficulty_player_votes[player.name] = i
-	set_difficulty()
-	update_difficulty_gui_for_all()
+	if global.difficulty_player_votes[player.name] ~= i then
+		game.print(player.name .. " has voted for " .. difficulties[i].name .. " difficulty!", difficulties[i].print_color)
+		global.difficulty_player_votes[player.name] = i
+		set_difficulty()
+		update_difficulty_gui_for_all()
+	else
+		player.print("You already voted for this difficulty", {r = 0.98, g = 0.66, b = 0.22})
+	end
 	event.element.parent.destroy()
 end
 	

@@ -85,8 +85,10 @@ function Public.initial_setup()
 		defines.input_action.activate_cut,
 		defines.input_action.activate_paste,
 		defines.input_action.change_active_quick_bar,
+		defines.input_action.change_active_item_group_for_filters,
 		defines.input_action.clear_cursor,
 		defines.input_action.edit_permission_group,
+		defines.input_action.gui_checked_state_changed,
 		defines.input_action.gui_click,
 		defines.input_action.gui_confirmed,
 		defines.input_action.gui_elem_changed,
@@ -100,15 +102,19 @@ function Public.initial_setup()
 		defines.input_action.open_kills_gui,
 		defines.input_action.quick_bar_set_selected_page,
 		defines.input_action.quick_bar_set_slot,
-		defines.input_action.rotate_entity,
 		defines.input_action.set_filter,
 		defines.input_action.set_player_color,
 		defines.input_action.start_walking,
 		defines.input_action.toggle_show_entity_info,
 		defines.input_action.write_to_console,
+		defines.input_action.map_editor_action,
+		defines.input_action.toggle_map_editor,
+		defines.input_action.change_multiplayer_config,
+		defines.input_action.admin_action,
 	}
 	for _, d in pairs(defs) do p.set_allows_action(d, true) end
 
+	global.reroll_time_limit = 1800
 	global.gui_refresh_delay = 0
 	global.game_lobby_active = true
 	global.bb_debug = false
@@ -116,6 +122,9 @@ function Public.initial_setup()
 		--TEAM SETTINGS--
 		["team_balancing"] = true,			--Should players only be able to join a team that has less or equal members than the opposing team?
 		["only_admins_vote"] = false,		--Are only admins able to vote on the global difficulty?
+		--MAP SETTINGS--
+		["new_year_island"] = false,
+		["map_reroll_admin_disable"] = true,
 	}
 
 	--Disable Nauvis
@@ -162,12 +171,15 @@ end
 function Public.draw_structures()
 	local surface = game.surfaces[global.bb_surface_name]
 	Terrain.draw_spawn_area(surface)
-	Terrain.clear_ore_in_main(surface)
-	Terrain.generate_spawn_ore(surface)
+	if global.active_special_games['mixed_ore_map'] then
+		Terrain.draw_mixed_ore_spawn_area(surface)
+	else
+		Terrain.clear_ore_in_main(surface)
+		Terrain.generate_spawn_ore(surface)
+	end
 	Terrain.generate_additional_rocks(surface)
 	Terrain.generate_silo(surface)
-	Terrain.draw_spawn_circle(surface)
-	game.surfaces[global.bb_surface_name].create_entity({name="flying-text",position={-4,-13},text="Experimental version: Boss biters",color = {r = 0, g = 1, b = 0, a = 0.5},text_align="right"}).active=false
+	Terrain.draw_spawn_island(surface)
 	--Terrain.generate_spawn_goodies(surface)
 end
 
@@ -185,6 +197,7 @@ function Public.tables()
 		global.bb_surface_name = "bb0"
 	end
 
+	global.reroll_map_voting = {}
 	global.bb_evolution = {}
 	global.bb_game_won_by_team = nil
 	global.bb_threat = {}
@@ -199,21 +212,30 @@ function Public.tables()
 	global.rocket_silo = {}
 	global.spectator_rejoin_delay = {}
 	global.spy_fish_timeout = {}
-	global.target_entities = {}
 	global.tm_custom_name = {}
 	global.total_passive_feed_redpotion = 0
 	global.unit_spawners = {}
 	global.boss_units = {}
 	global.unit_spawners.north_biters = {}
 	global.unit_spawners.south_biters = {}
-	global.active_special_games = {}
-	global.special_games_variables = {}
+	global.ai_strikes = {}
+	global.ai_targets = {}
 	global.player_data_afk = {}
+	global.max_group_size_initial = 300							--Maximum unit group size for all biters at start, just used as a reference, doesnt change initial group size.
+	global.max_group_size = {}
+	global.max_group_size["north_biters"] = 300							--Maximum unit group size for north biters.
+	global.max_group_size["south_biters"] = 300							--Maximum unit group size for south biters.
 	global.biter_spawn_unseen = {
 		["north"] = {
 			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
 		},
 		["south"] = {
+			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
+		},
+		["north_biters_boss"] = {
+			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
+		},
+		["south_biters_boss"] = {
 			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
 		}
 	}
@@ -378,9 +400,8 @@ function Public.forces()
 		game.forces[force.name].technologies["atomic-bomb"].enabled = false
 		game.forces[force.name].technologies["cliff-explosives"].enabled = false
 		game.forces[force.name].technologies["land-mine"].enabled = false
-		game.forces[force.name].technologies["uranium-ammo"].researched = true
 		game.forces[force.name].research_queue_enabled = true
-		global.target_entities[force.index] = {}
+		global.ai_targets[force.name] = { available = {}, selected = {} }
 		global.spy_fish_timeout[force.name] = 0
 		global.bb_evolution[force.name] = 0
 		global.reanim_chance[force.index] = 0

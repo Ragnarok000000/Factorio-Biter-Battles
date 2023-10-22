@@ -5,7 +5,7 @@ local Game = require 'utils.game'
 local Server = require 'utils.server'
 local Tabs = require 'comfy_panel.main'
 local session = require 'utils.datastore.session_data'
-require 'utils.gui_styles'
+local gui_style = require 'utils.utils'.gui_style
 local Class = {}
 
 local insert = table.insert
@@ -395,20 +395,12 @@ local function draw_main_frame(left, player)
     local right_flow = bottom_flow.add {type = 'flow'}
     right_flow.style.horizontal_align = 'right'
 
-    if (trusted[player.name] or player.admin) or global.comfy_panel_config.poll_trusted == false then
-        local create_poll_button =
-            right_flow.add {type = 'button', name = create_poll_button_name, caption = 'Create Poll'}
-        apply_button_style(create_poll_button)
-    else
-        local create_poll_button =
-            right_flow.add {
-            type = 'button',
-            caption = 'Create Poll',
-            enabled = false,
-            tooltip = 'Sorry, you need to be trusted to create polls.'
-        }
-        apply_button_style(create_poll_button)
+    local create_poll_button = right_flow.add{type = 'button', name = create_poll_button_name, caption = 'Create Poll'}
+    if not player.admin then
+        create_poll_button.enabled = false
+        create_poll_button.tooltip = "Poll creation is disabled"
     end
+    apply_button_style(create_poll_button)
 end
 
 local function remove_create_poll_frame(create_poll_frame, player_index)
@@ -832,14 +824,7 @@ local function player_joined(event)
             sprite = 'item/programmable-speaker',
             tooltip = 'Let your question be heard!'
         }
-        element_style({element = button, x = 38, y = 38, pad = -2})
-        --[[
-        button.style.minimal_width = 38
-        button.style.maximal_width = 38
-        button.style.minimal_height = 38
-        button.style.maximal_height = 38
-        button.style.padding = -2
-        ]]
+        gui_style(button, {width = 38, height = 38, padding = -2})
     end
 end
 

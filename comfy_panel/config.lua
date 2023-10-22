@@ -153,6 +153,24 @@ local functions = {
 			game.print("Admin-only difficulty voting has been disabled!")
 		end
 	end,
+	["comfy_panel_new_year_island"] = function(event)
+		if event.element.switch_state == "left" then
+			global.bb_settings['new_year_island'] = true
+            get_actor(event, '{New Year Island}', "New Year island has been enabled!", true)
+		else
+			global.bb_settings['new_year_island'] = false
+			get_actor(event, '{New Year Island}', "New Year island has been disabled!", true)
+		end
+	end,
+	["bb_map_reroll_toggle"] = function(event)
+		if event.element.switch_state == "left" then
+			global.bb_settings.map_reroll = true
+			game.print("Map Reroll is enabled!")
+		else
+			global.bb_settings.map_reroll = false
+			game.print("Map Reroll is disabled!")
+		end
+	end,
 }
 
 local poll_function = {
@@ -481,6 +499,13 @@ local build_config_gui = (function(player, frame)
 			if not admin then switch.ignored_by_interaction = true end
 			
 			scroll_pane.add({type = 'line'})
+				
+			local switch_state = "right"	
+            if global.bb_settings.map_reroll then switch_state = "left" end
+			local switch = add_switch(scroll_pane, switch_state, "bb_map_reroll_toggle", "Map Reroll", "Enables map reroll feature.")
+			if not admin then switch.ignored_by_interaction = true end
+			
+			scroll_pane.add({type = 'line'})
 		end
 		
         if package.loaded['maps.mountain_fortress_v3.main'] then
@@ -578,6 +603,30 @@ local build_config_gui = (function(player, frame)
             )
             scroll_pane.add({type = 'line'})
         end
+
+
+        label = scroll_pane.add({type = 'label', caption = 'Map Settings'})
+        label.style.font = 'default-bold'
+        label.style.padding = 0
+        label.style.left_padding = 10
+        label.style.top_padding = 10
+        label.style.horizontal_align = 'left'
+        label.style.vertical_align = 'bottom'
+        label.style.font_color = Color.hot_pink
+
+        switch_state = 'right'
+        if global.bb_settings['new_year_island'] then
+            switch_state = 'left'
+        end
+        add_switch(
+            scroll_pane,
+            switch_state,
+            'comfy_panel_new_year_island',
+            'New Year Island',
+            'Add New Year(Christmass) theme decorations to spawn island (takes effect after map restart)'
+        )
+        scroll_pane.add({type = 'line'})
+
     end
     for _, e in pairs(scroll_pane.children) do
         if e.type == 'line' then
