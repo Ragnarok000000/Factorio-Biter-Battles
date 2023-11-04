@@ -114,10 +114,12 @@ function Public.initial_setup()
 	}
 	for _, d in pairs(defs) do p.set_allows_action(d, true) end
 
+	global.suspend_time_limit = 3600
 	global.reroll_time_limit = 1800
 	global.gui_refresh_delay = 0
 	global.game_lobby_active = true
 	global.bb_debug = false
+	global.ignore_lists = {}
 	global.bb_settings = {
 		--TEAM SETTINGS--
 		["team_balancing"] = true,			--Should players only be able to join a team that has less or equal members than the opposing team?
@@ -128,6 +130,8 @@ function Public.initial_setup()
 		["map_reroll_admin_disable"] = true,
 	}
 
+	global.total_time_online_players = {}
+	global.already_logged_current_session_time_online_players = {}
 	--Disable Nauvis
 	local surface = game.surfaces[1]
 	local map_gen_settings = surface.map_gen_settings
@@ -225,6 +229,10 @@ function Public.tables()
 	end
 	-- Our terrain gen seed IS the map seed
 	global.random_generator.re_seed(global.next_map_seed)
+	global.suspended_time = 36000
+	global.suspend_target = nil
+	global.suspend_voting = {}
+	global.suspended_players = {}
 	global.reroll_map_voting = {}
 	global.bb_evolution = {}
 	global.bb_game_won_by_team = nil
