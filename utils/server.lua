@@ -40,6 +40,7 @@ local discord_admin_tag = '[DISCORD-ADMIN]'
 -- TODO: revert this quick workaround to a more perm solution
 -- local discord_banned_tag = '[DISCORD-BANNED]'
 -- local discord_banned_embed_tag = '[DISCORD-BANNED-EMBED]'
+local discord_kicked_tag = '[DISCORD-EMBED]'
 local discord_banned_tag = '[DISCORD-EMBED]'
 local discord_banned_embed_tag ='[DISCORD-EMBED]'
 local discord_admin_raw_tag = '[DISCORD-ADMIN-RAW]'
@@ -144,6 +145,12 @@ end
 -- @param  message<string> the content of the embed.
 function Public.to_banned_embed(message)
     raw_print(discord_banned_embed_tag .. message)
+end
+
+--- Sends a embed message to the linked kick discord channel. The message is sanitized of markdown server side.
+-- @param  message<string> the content of the embed.
+function Public.to_kicked_embed(message)
+    raw_print(discord_kicked_tag .. message)
 end
 
 --- Sends a embed message to the linked admin discord channel. The message is not sanitized of markdown.
@@ -853,6 +860,14 @@ Event.add(
                 return
             else
                 Public.to_banned_embed(table.concat {'Server unbanned ' .. reason})
+                return
+            end
+        elseif cmd == 'kick' then
+            if player then
+                Public.to_kicked_embed(table.concat {player.name .. ' kicked ' .. reason})
+                return
+            else
+                Public.to_kicked_embed(table.concat {'Server kicked ' .. reason})
                 return
             end
         end
