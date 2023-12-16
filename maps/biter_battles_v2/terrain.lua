@@ -7,11 +7,14 @@ local mixed_ore_map = require "maps.biter_battles_v2.mixed_ore_map"
 local AiTargets = require "maps.biter_battles_v2.ai_targets"
 local tables = require "maps.biter_battles_v2.tables"
 local session = require 'utils.datastore.session_data'
-local biter_texture = require "maps.biter_battles_v2.biter_texture"
+local biter_texture = require "maps.biter_battles_v2.precomputed.biter_texture"
+local river = require "maps.biter_battles_v2.precomputed.river"
+local chunk = require "maps.biter_battles_v2.precomputed.chunk_container"
 
 local spawn_ore = tables.spawn_ore
 local table_insert = table.insert
 local math_floor = math.floor
+local math_random = math.random
 local math_abs = math.abs
 local math_sqrt = math.sqrt
 
@@ -19,9 +22,9 @@ local GetNoise = require "utils.get_noise"
 local simplex_noise = require 'utils.simplex_noise'.d2
 local river_circle_size = 39
 local spawn_island_size = 9
-local ores = {"copper-ore", "iron-ore", "stone", "coal"}
+local ores = {"iron-ore",  "copper-ore", "iron-ore", "stone", "copper-ore", "iron-ore", "copper-ore", "iron-ore", "coal", "iron-ore", "copper-ore",  "iron-ore", "stone", "copper-ore", "coal"}
 -- mixed_ore_multiplier order is based on the ores variable
-local mixed_ore_multiplier = {1, 1, 1, 1}
+local mixed_ore_multiplier = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 local rocks = {"rock-huge", "rock-big", "rock-big", "rock-big", "sand-rock-big"}
 
 local chunk_tile_vectors = {}
@@ -156,17 +159,18 @@ local function is_within_spawn_island(pos)
 	return true
 end
 
--- border_river_noise is the maximum random value that can be added to each side of the river
-local border_river_noise = 4
-local river_width_half_min = math_floor(bb_config.border_river_width * -0.5)
-local river_width_half_max = river_width_half_min - border_river_noise
--- pos must be from the North side
-local function is_horizontal_border_river(pos)
-	if tile_distance_to_center(pos) < river_circle_size then return true end
-	if pos.y < river_width_half_max then return false end
-	if pos.y > river_width_half_min then return true end
-	if pos.y >= river_width_half_min - (math_abs(Functions.get_noise(1, pos)) * border_river_noise) then return true end
-	return false
+local river_width_half = math_floor(bb_config.border_river_width * 0.5)
+local function is_horizontal_border_river(pos, seed)
+	if tile_distance_to_center(pos) < river_circle_size then
+		return true
+	end
+
+	-- Offset contains coefficient in a range between [-4,4]. Select it
+	-- from pre-computed table. Position X coordinate is used to determinate
+	-- which offset is selected.
+	local offset = river.offset[(pos.x + seed) % river.size]
+	local y = -(pos.y + offset)
+	return (y <= river_width_half)
 end
 
 local function generate_starting_area(pos, surface)
@@ -174,7 +178,8 @@ local function generate_starting_area(pos, surface)
 	local noise_multiplier = 15
 	local min_noise = -noise_multiplier * 1.25
 
-	if is_horizontal_border_river(pos) then
+	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
+	if is_horizontal_border_river(pos, seed) then
 		return
 	end
 
@@ -257,17 +262,33 @@ end
 
 local function generate_river(surface, left_top_x, left_top_y)
 	if not (left_top_y == -32 or (left_top_y == -64 and (left_top_x == -32 or left_top_x == 0))) then return end
-	for x = 0, 31, 1 do
-		for y = 0, 31, 1 do
-			local pos = {x = left_top_x + x, y = left_top_y + y}
-			if is_horizontal_border_river(pos) and not is_within_spawn_island(pos) then
-				surface.set_tiles({{name = "deepwater", position = pos}})
+	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
+	-- Stack allocated buffer with a capacity of 1024.
+	local tiles = chunk.buffer
+	local pos = { x = left_top_x }
+	local i = 1
+	for _ = 0, 31, 1 do
+		pos.y = left_top_y
+		for _ = 0, 31, 1 do
+			pos.y = pos.y + 1
+			if is_horizontal_border_river(pos, seed) and not is_within_spawn_island(pos) then
+				-- Need to create brand new object to avoid passing 'pos' as
+				-- reference. API calls don't require 'x' and 'y' keys.
+				local unref_pos = { pos.x, pos.y }
+				tiles[i] = {name = "deepwater", position = unref_pos}
 				if global.random_generator(1, 64) == 1 then
-					local e = surface.create_entity({name = "fish", position = pos})
+					surface.create_entity({name = "fish", position = pos})
 				end
+			else
+				tiles[i] = nil
 			end
+
+			i = i + 1
 		end
-	end	
+		pos.x = pos.x + 1
+	end
+
+	surface.set_tiles(tiles)
 end
 
 local scrap_vectors = {}
@@ -378,20 +399,17 @@ local function mixed_ore(surface, left_top_x, left_top_y)
 	local noise = GetNoise("bb_ore", {x = left_top_x + 16, y = left_top_y + 16}, seed)
 
 	--Draw noise text values to determine which chunks are valid for mixed ore.
-	--rendering.draw_text{text = noise, surface = game.surfaces.biter_battles, target = {x = left_top_x + 16, y = left_top_y + 16}, color = {255, 255, 255}, scale = 2, font = "default-game"}
-
-	--Skip chunks that are too far off the ore noise value.
-	if noise < 0.42 then return end
+	-- rendering.draw_text{text = noise, surface = surface, target = {left_top_x + 16, left_top_y + 16}, color = {255, 128, 0}, scale = 2, font = "default-game"}
 
 	--Draw the mixed ore patches.
 	for x = 0, 31, 1 do
 		for y = 0, 31, 1 do
 			local pos = {x = left_top_x + x, y = left_top_y + y}
 			if surface.can_place_entity({name = "iron-ore", position = pos}) then
-				noise = GetNoise("bb_ore", pos, seed)
-				if noise > 0.72 then
-					local i = math_floor(noise * 25 + math_abs(pos.x) * 0.05) % 4 + 1
-					local amount = (global.random_generator(800, 1000) + math_sqrt(pos.x ^ 2 + pos.y ^ 2) * 3) * mixed_ore_multiplier[i]
+				local noise = GetNoise("bb_ore", pos, seed)
+				if noise > 0.6 then
+					local i = math_floor(noise * 25 + math_abs(pos.x) * 0.05) % 15 + 1
+					local amount = (math_random(800, 1000) + math_sqrt(pos.x ^ 2 + pos.y ^ 2) * 3) * mixed_ore_multiplier[i]
 					surface.create_entity({name = ores[i], position = pos, amount = amount})
 				end
 			end
@@ -412,7 +430,9 @@ function Public.generate(event)
 	if global.active_special_games['mixed_ore_map'] then
 		mixed_ore_map(surface, left_top_x, left_top_y)
 	else
-		mixed_ore(surface, left_top_x, left_top_y)
+		if left_top_x + 16 < -150 or left_top_x + 16 > 150 or left_top_y + 16 < -150 then
+			mixed_ore(surface, left_top_x, left_top_y)
+		end
 	end
 	generate_river(surface, left_top_x, left_top_y)
 	draw_biter_area(surface, left_top_x, left_top_y)		
@@ -692,11 +712,12 @@ end
 
 --Landfill Restriction
 function Public.restrict_landfill(surface, user, tiles)
+	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
 	for _, t in pairs(tiles) do
 		local check_position = t.position
 		if check_position.y > 0 then check_position = {x = check_position.x, y = (check_position.y * -1) - 1} end
 		local trusted = session.get_trusted_table()
-		if is_horizontal_border_river(check_position) then
+		if is_horizontal_border_river(check_position, seed) then
 			surface.set_tiles({{name = t.old_tile.name, position = t.position}}, true)
 			if user ~= nil then
 				user.print('You can not landfill the river', {r = 0.22, g = 0.99, b = 0.99})
